@@ -5,15 +5,15 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.14-SNAPSHOT</version>
+        <version>2.7.12</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.exg</groupId>
     <artifactId>Sistema-Calculo-de-Rutas-EXG23</artifactId>
     <version>0.1</version>
     <packaging>war</packaging>
-    <name>Sistema-Calculo-de-Rutas-EXG23</name>
-    <description>Sistema-Calculo-de-Rutas-EXG23</description>
+    <name>CDR</name>
+    <description>Sistema-de-Calculo-de-Rutas-EXG23</description>
     <properties>
         <java.version>1.8</java.version>
         <spring-cloud.version>2021.0.7</spring-cloud.version>
@@ -42,7 +42,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-websocket</artifactId>
-        </dependency>
+        </dependency><!--
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-bus</artifactId>
@@ -58,7 +58,7 @@
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -125,12 +125,6 @@
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>jakarta.persistence</artifactId>
             <version>2.2.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>org.eclipse.persistence.jpa.modelgen.processor</artifactId>
-            <version>2.7.10</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
     <dependencyManagement>

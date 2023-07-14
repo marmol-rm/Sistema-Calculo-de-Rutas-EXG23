@@ -16,10 +16,12 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ *
+ * @author molin
+ */
 @Entity
 @Table(name = "cdr_rutas", catalog = "db_rutas", schema = "")
 @XmlRootElement
@@ -32,7 +34,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "CdrRutas.findByRutHoraFin", query = "SELECT c FROM CdrRutas c WHERE c.rutHoraFin = :rutHoraFin"),
     @NamedQuery(name = "CdrRutas.findByRutGuardada", query = "SELECT c FROM CdrRutas c WHERE c.rutGuardada = :rutGuardada"),
     @NamedQuery(name = "CdrRutas.findByRutFecha", query = "SELECT c FROM CdrRutas c WHERE c.rutFecha = :rutFecha"),
-    @NamedQuery(name = "CdrRutas.findByRutDistancia", query = "SELECT c FROM CdrRutas c WHERE c.rutDistancia = :rutDistancia")})
+    @NamedQuery(name = "CdrRutas.findByRutDistancia", query = "SELECT c FROM CdrRutas c WHERE c.rutDistancia = :rutDistancia"),
+    @NamedQuery(name = "CdrRutas.findByRutTipo", query = "SELECT c FROM CdrRutas c WHERE c.rutTipo = :rutTipo")})
 public class CdrRutas implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -41,33 +44,38 @@ public class CdrRutas implements Serializable {
     @Basic(optional = false)
     @Column(name = "rut_id")
     private Integer rutId;
-    @Size(max = 100)
+    @Basic(optional = false)
     @Column(name = "rut_coordenadas_partida")
     private String rutCoordenadasPartida;
-    @Size(max = 100)
+    @Basic(optional = false)
     @Column(name = "rut_coordenadas_destino")
     private String rutCoordenadasDestino;
+    @Basic(optional = false)
     @Column(name = "rut_hora_inicio")
     @Temporal(TemporalType.TIMESTAMP)
     private Date rutHoraInicio;
+    @Basic(optional = false)
     @Column(name = "rut_hora_fin")
     @Temporal(TemporalType.TIMESTAMP)
     private Date rutHoraFin;
     @Basic(optional = false)
-    @NotNull
     @Column(name = "rut_guardada")
     private boolean rutGuardada;
+    @Basic(optional = false)
     @Column(name = "rut_fecha")
     @Temporal(TemporalType.DATE)
     private Date rutFecha;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "rut_distancia")
     private BigDecimal rutDistancia;
+    @Basic(optional = false)
+    @Column(name = "rut_tipo")
+    private Character rutTipo;
     @JoinColumn(name = "rut_ubi_destino", referencedColumnName = "ubi_id")
-    @ManyToOne
+    @ManyToOne(optional = false)
     private CdrUbicacion rutUbiDestino;
     @JoinColumn(name = "rut_ubi_partida", referencedColumnName = "ubi_id")
-    @ManyToOne
+    @ManyToOne(optional = false)
     private CdrUbicacion rutUbiPartida;
     @JoinColumn(name = "rut_usu_id", referencedColumnName = "usu_id")
     @ManyToOne(optional = false)
@@ -80,9 +88,15 @@ public class CdrRutas implements Serializable {
         this.rutId = rutId;
     }
 
-    public CdrRutas(Integer rutId, boolean rutGuardada) {
+    public CdrRutas(Integer rutId, String rutCoordenadasPartida, String rutCoordenadasDestino, Date rutHoraInicio, Date rutHoraFin, boolean rutGuardada, Date rutFecha, Character rutTipo) {
         this.rutId = rutId;
+        this.rutCoordenadasPartida = rutCoordenadasPartida;
+        this.rutCoordenadasDestino = rutCoordenadasDestino;
+        this.rutHoraInicio = rutHoraInicio;
+        this.rutHoraFin = rutHoraFin;
         this.rutGuardada = rutGuardada;
+        this.rutFecha = rutFecha;
+        this.rutTipo = rutTipo;
     }
 
     public Integer getRutId() {
@@ -149,6 +163,14 @@ public class CdrRutas implements Serializable {
         this.rutDistancia = rutDistancia;
     }
 
+    public Character getRutTipo() {
+        return rutTipo;
+    }
+
+    public void setRutTipo(Character rutTipo) {
+        this.rutTipo = rutTipo;
+    }
+
     public CdrUbicacion getRutUbiDestino() {
         return rutUbiDestino;
     }
@@ -182,7 +204,6 @@ public class CdrRutas implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof CdrRutas)) {
             return false;
         }

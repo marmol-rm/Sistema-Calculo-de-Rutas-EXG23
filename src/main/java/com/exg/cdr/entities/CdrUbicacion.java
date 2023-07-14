@@ -1,8 +1,9 @@
 package com.exg.cdr.entities;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,10 +13,13 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+/**
+ *
+ * @author molin
+ */
 @Entity
 @Table(name = "cdr_ubicacion", catalog = "db_rutas", schema = "")
 @XmlRootElement
@@ -32,21 +36,28 @@ public class CdrUbicacion implements Serializable {
     @Basic(optional = false)
     @Column(name = "ubi_id")
     private Integer ubiId;
-    @Size(max = 100)
+    @Basic(optional = false)
     @Column(name = "ubi_nombre")
     private String ubiNombre;
+    @Basic(optional = false)
     @Column(name = "ubi_guardada")
-    private Boolean ubiGuardada;
-    @OneToMany(mappedBy = "rutUbiDestino")
-    private Collection<CdrRutas> cdrRutasCollection;
-    @OneToMany(mappedBy = "rutUbiPartida")
-    private Collection<CdrRutas> cdrRutasCollection1;
+    private boolean ubiGuardada;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "rutUbiDestino")
+    private List<CdrRutas> cdrRutasList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "rutUbiPartida")
+    private List<CdrRutas> cdrRutasList1;
 
     public CdrUbicacion() {
     }
 
     public CdrUbicacion(Integer ubiId) {
         this.ubiId = ubiId;
+    }
+
+    public CdrUbicacion(Integer ubiId, String ubiNombre, boolean ubiGuardada) {
+        this.ubiId = ubiId;
+        this.ubiNombre = ubiNombre;
+        this.ubiGuardada = ubiGuardada;
     }
 
     public Integer getUbiId() {
@@ -65,30 +76,30 @@ public class CdrUbicacion implements Serializable {
         this.ubiNombre = ubiNombre;
     }
 
-    public Boolean getUbiGuardada() {
+    public boolean getUbiGuardada() {
         return ubiGuardada;
     }
 
-    public void setUbiGuardada(Boolean ubiGuardada) {
+    public void setUbiGuardada(boolean ubiGuardada) {
         this.ubiGuardada = ubiGuardada;
     }
 
     @XmlTransient
-    public Collection<CdrRutas> getCdrRutasCollection() {
-        return cdrRutasCollection;
+    public List<CdrRutas> getCdrRutasList() {
+        return cdrRutasList;
     }
 
-    public void setCdrRutasCollection(Collection<CdrRutas> cdrRutasCollection) {
-        this.cdrRutasCollection = cdrRutasCollection;
+    public void setCdrRutasList(List<CdrRutas> cdrRutasList) {
+        this.cdrRutasList = cdrRutasList;
     }
 
     @XmlTransient
-    public Collection<CdrRutas> getCdrRutasCollection1() {
-        return cdrRutasCollection1;
+    public List<CdrRutas> getCdrRutasList1() {
+        return cdrRutasList1;
     }
 
-    public void setCdrRutasCollection1(Collection<CdrRutas> cdrRutasCollection1) {
-        this.cdrRutasCollection1 = cdrRutasCollection1;
+    public void setCdrRutasList1(List<CdrRutas> cdrRutasList1) {
+        this.cdrRutasList1 = cdrRutasList1;
     }
 
     @Override
@@ -100,7 +111,6 @@ public class CdrUbicacion implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof CdrUbicacion)) {
             return false;
         }

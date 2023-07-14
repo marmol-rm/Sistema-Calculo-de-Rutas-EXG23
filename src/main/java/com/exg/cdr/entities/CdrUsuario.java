@@ -1,7 +1,7 @@
 package com.exg.cdr.entities;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -13,10 +13,13 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+/**
+ *
+ * @author molin
+ */
 @Entity
 @Table(name = "cdr_usuario", catalog = "db_rutas", schema = "")
 @XmlRootElement
@@ -34,23 +37,30 @@ public class CdrUsuario implements Serializable {
     @Basic(optional = false)
     @Column(name = "usu_id")
     private Integer usuId;
-    @Size(max = 50)
+    @Basic(optional = false)
     @Column(name = "usu_username")
     private String usuUsername;
-    @Size(max = 100)
+    @Basic(optional = false)
     @Column(name = "usu_password")
     private String usuPassword;
-    @Size(max = 100)
+    @Basic(optional = false)
     @Column(name = "usu_email")
     private String usuEmail;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "rutUsuId")
-    private Collection<CdrRutas> cdrRutasCollection;
+    private List<CdrRutas> cdrRutasList;
 
     public CdrUsuario() {
     }
 
     public CdrUsuario(Integer usuId) {
         this.usuId = usuId;
+    }
+
+    public CdrUsuario(Integer usuId, String usuUsername, String usuPassword, String usuEmail) {
+        this.usuId = usuId;
+        this.usuUsername = usuUsername;
+        this.usuPassword = usuPassword;
+        this.usuEmail = usuEmail;
     }
 
     public Integer getUsuId() {
@@ -86,12 +96,12 @@ public class CdrUsuario implements Serializable {
     }
 
     @XmlTransient
-    public Collection<CdrRutas> getCdrRutasCollection() {
-        return cdrRutasCollection;
+    public List<CdrRutas> getCdrRutasList() {
+        return cdrRutasList;
     }
 
-    public void setCdrRutasCollection(Collection<CdrRutas> cdrRutasCollection) {
-        this.cdrRutasCollection = cdrRutasCollection;
+    public void setCdrRutasList(List<CdrRutas> cdrRutasList) {
+        this.cdrRutasList = cdrRutasList;
     }
 
     @Override
@@ -103,7 +113,6 @@ public class CdrUsuario implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof CdrUsuario)) {
             return false;
         }

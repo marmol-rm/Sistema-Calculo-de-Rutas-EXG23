@@ -10,9 +10,12 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ *
+ * @author molin
+ */
 @Entity
 @Table(name = "cdr_plantilla_correo", catalog = "db_rutas", schema = "")
 @XmlRootElement
@@ -31,16 +34,12 @@ public class CdrPlantillaCorreo implements Serializable {
     @Basic(optional = false)
     @Column(name = "ptc_id")
     private Integer ptcId;
-    @Size(max = 50)
     @Column(name = "pct_asunto")
     private String pctAsunto;
-    @Size(max = 100)
     @Column(name = "ptc_saludo")
     private String ptcSaludo;
-    @Size(max = 100)
     @Column(name = "ptc_despedida")
     private String ptcDespedida;
-    @Size(max = 300)
     @Column(name = "ptc_mensaje")
     private String ptcMensaje;
 
@@ -100,7 +99,6 @@ public class CdrPlantillaCorreo implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof CdrPlantillaCorreo)) {
             return false;
         }
