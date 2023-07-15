@@ -1,6 +1,6 @@
 package com.exg.cdr.controller;
 
-import com.exg.cdr.RutaRequest;
+import com.exg.cdr.request.RutaRequest;
 import com.exg.cdr.entities.CdrPlantillaCorreo;
 import com.exg.cdr.entities.CdrRutas;
 import com.exg.cdr.entities.CdrUbicacion;
@@ -9,12 +9,15 @@ import com.exg.cdr.repo.CdrPlantillaCorreoRepo;
 import com.exg.cdr.repo.CdrRutasRepo;
 import com.exg.cdr.repo.CdrUbicacionRepo;
 import com.exg.cdr.repo.CdrUsuarioRepo;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -30,12 +33,24 @@ public class CdrController {
     @Autowired
     private CdrPlantillaCorreoRepo plantillaCorreoRepo;
 
+    private JavaMailSender emailSender;
+
     @GetMapping("/get-users")
     List<CdrUsuario> getUsers() {
         try {
             return usuarioRepo.findAll();
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    @GetMapping("/get-rutas")
+    List<CdrRutas> getRutas() {
+        try {
+            return rutasRepo.findAll();
+        } catch (Exception e) {
+            //e.printStackTrace();
             return new ArrayList<>();
         }
     }
@@ -43,12 +58,12 @@ public class CdrController {
     @PostMapping("/save-user")
     ResponseEntity<CdrUsuario> saveUser(@RequestBody CdrUsuario usr) {
         try {
-            if(usuarioRepo.findByUsuEmail(usr.getUsuEmail()).orElse(null) == null ||
+            if(usuarioRepo.findByUsuEmail(usr.getUsuEmail()).orElse(null) == null &&
             usuarioRepo.findByUsuUsername(usr.getUsuUsername()).orElse(null) == null) {
                 usr = usuarioRepo.save(usr);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
         return ResponseEntity.ok(usr);
@@ -60,7 +75,7 @@ public class CdrController {
             if(ubicacionRepo.findByUbiNombre(ubi.getUbiNombre()).orElse(null) == null)
                 ubi = ubicacionRepo.save(ubi);
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
         return ResponseEntity.ok(ubi);
@@ -70,30 +85,39 @@ public class CdrController {
     ResponseEntity<CdrRutas> saveRuta(@RequestBody RutaRequest r) {
         // Se crea la ruta base
         CdrRutas ruta = new CdrRutas(
-                null, r.getRutCoordenadasPartida(), r.getRutCoordenadasDestino(),
-                r.getRutHoraInicio(), r.getRutHoraFin(), r.isRutGuardada(), r.getRutFecha(),
-                r.getRutTipo()
+                null, r.getCoordPartida(), r.getCoordDestino(),
+                r.getHoraInicio(), r.getHoraFin(), false,
+                new Date(), r.getDistanciaTotal(), 'V'
         );
         try {
             CdrPlantillaCorreo plantilla = plantillaCorreoRepo.findById(1).orElse(new CdrPlantillaCorreo());
-            CdrUbicacion ubiPartida = ubicacionRepo.findByUbiNombre(r.getRutUbiPartida()).orElse(null);
-            CdrUbicacion ubiDestino = ubicacionRepo.findByUbiNombre(r.getRutUbiDestino()).orElse(null);
+            CdrUbicacion ubiPartida = ubicacionRepo.findByUbiNombre(r.getUbiPartida()).orElse(null);
+            CdrUbicacion ubiDestino = ubicacionRepo.findByUbiNombre(r.getUbiDestino()).orElse(null);
 
-            if(ubiPartida == null) {
-                ubiPartida = new CdrUbicacion(null, r.getRutUbiPartida(), r.isRutGuardada());
+            if(ubiPartida == null && r.getUbiPartida() != null) {
+                ubiPartida = new CdrUbicacion(null, r.getUbiPartida(), false);
                 ubiPartida = ubicacionRepo.save(ubiPartida);
             }
-            if(ubiDestino == null) {
-                ubiDestino = new CdrUbicacion(null, r.getRutUbiDestino(), r.isRutGuardada());
+            if(ubiDestino == null && r.getUbiDestino() != null) {
+                ubiDestino = new CdrUbicacion(null, r.getUbiDestino(), false);
                 ubiDestino = ubicacionRepo.save(ubiDestino);
             }
             // Se le agregan los valores de usuario y ubicaciones
-            ruta.setRutUsuId(new CdrUsuario(r.getRutUsuId()));
+            ruta.setRutUsuId(usuarioRepo.findByUsuEmail(r.getUsuEmail()).orElse(null));
             ruta.setRutUbiPartida(ubiPartida);
             ruta.setRutUbiDestino(ubiDestino);
-            ruta = rutasRepo.save(ruta);
+            if(ruta.getRutUbiDestino() != null)
+                ruta = rutasRepo.save(ruta);
+
+            // Se envía el correo de finaluzacion
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("");
+            message.setTo(r.getUsuEmail());
+            message.setSubject(plantilla.getPctAsunto());
+            message.setText(plantilla.getPtcMensaje());
+            //emailSender.send(message);
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
         return ResponseEntity.ok(ruta);

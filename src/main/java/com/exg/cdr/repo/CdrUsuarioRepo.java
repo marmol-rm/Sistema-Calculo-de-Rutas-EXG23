@@ -9,6 +9,6 @@ import java.util.Optional;
 @Repository
 public interface CdrUsuarioRepo extends JpaRepository<CdrUsuario, Integer> {
 
-    Optional<CdrUsuario> findByUsuEmail(String email);
-    Optional<CdrUsuario> findByUsuUsername(String username);
+    Optional<CdrUsuario> findByUsuEmail(String usuEmail);
+    Optional<CdrUsuario> findByUsuUsername(String usuUsername);
 }

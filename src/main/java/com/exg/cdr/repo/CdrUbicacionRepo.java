@@ -9,6 +9,6 @@ import java.util.Optional;
 @Repository
 public interface CdrUbicacionRepo extends JpaRepository<CdrUbicacion, Integer> {
 
-    Optional<CdrUbicacion> findByUbiNombre(String nombre);
+    Optional<CdrUbicacion> findByUbiNombre(String ubiNombre);
 
 }

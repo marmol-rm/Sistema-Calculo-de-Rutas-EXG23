@@ -65,7 +65,6 @@ public class CdrRutas implements Serializable {
     @Column(name = "rut_fecha")
     @Temporal(TemporalType.DATE)
     private Date rutFecha;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "rut_distancia")
     private BigDecimal rutDistancia;
     @Basic(optional = false)
@@ -88,7 +87,8 @@ public class CdrRutas implements Serializable {
         this.rutId = rutId;
     }
 
-    public CdrRutas(Integer rutId, String rutCoordenadasPartida, String rutCoordenadasDestino, Date rutHoraInicio, Date rutHoraFin, boolean rutGuardada, Date rutFecha, Character rutTipo) {
+    public CdrRutas(Integer rutId, String rutCoordenadasPartida, String rutCoordenadasDestino, Date rutHoraInicio,
+                    Date rutHoraFin, boolean rutGuardada, Date rutFecha, BigDecimal rutDistancia, Character rutTipo) {
         this.rutId = rutId;
         this.rutCoordenadasPartida = rutCoordenadasPartida;
         this.rutCoordenadasDestino = rutCoordenadasDestino;
@@ -96,6 +96,7 @@ public class CdrRutas implements Serializable {
         this.rutHoraFin = rutHoraFin;
         this.rutGuardada = rutGuardada;
         this.rutFecha = rutFecha;
+        this.rutDistancia = rutDistancia;
         this.rutTipo = rutTipo;
     }
 
