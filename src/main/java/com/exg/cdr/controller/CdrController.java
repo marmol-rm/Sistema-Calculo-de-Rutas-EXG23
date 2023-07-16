@@ -47,7 +47,7 @@ public class CdrController {
         try {
             return usuarioRepo.findAll();
         } catch (Exception e) {
-            //e.printStackTrace();
+            LOG.severe(e.getLocalizedMessage());
             return new ArrayList<>();
         }
     }
@@ -58,18 +58,39 @@ public class CdrController {
             try {
                 return rutasRepo.findByRutFecha(fecha);
             } catch (Exception e) {
+                LOG.severe(e.getLocalizedMessage());
                 return new ArrayList<>();
             }
         } else {
             try {
                 return rutasRepo.findAll();
             } catch (Exception e) {
+                LOG.severe(e.getLocalizedMessage());
                 return new ArrayList<>();
             }
         }
     }
 
-    @PostMapping("/save-user")
+    @GetMapping("/get-ubi")
+    List<CdrUbicacion> getUbicacion(@RequestParam(required = false) String email) {
+        if(email != null) {
+            try {
+                return ubicacionRepo.findUbiVisitadas(email);
+            } catch (Exception e) {
+                LOG.severe(e.getLocalizedMessage());
+                return new ArrayList<>();
+            }
+        } else {
+            try {
+                return ubicacionRepo.findAll();
+            } catch (Exception e) {
+                LOG.severe(e.getLocalizedMessage());
+                return new ArrayList<>();
+            }
+        }
+    }
+
+    //@PostMapping("/save-user")
     ResponseEntity<CdrUsuario> saveUser(@RequestBody CdrUsuario usr) {
         try {
             if(usuarioRepo.findByUsuEmail(usr.getUsuEmail()).orElse(null) == null &&
@@ -77,19 +98,19 @@ public class CdrController {
                 usr = usuarioRepo.save(usr);
             }
         } catch (Exception e) {
-            //e.printStackTrace();
+            LOG.severe(e.getLocalizedMessage());
         }
 
         return ResponseEntity.ok(usr);
     }
 
-    @PostMapping("/save-ubi")
+    //@PostMapping("/save-ubi")
     ResponseEntity<CdrUbicacion> saveUbicacion(@RequestBody CdrUbicacion ubi) {
         try {
             if(ubicacionRepo.findByUbiNombre(ubi.getUbiNombre()).orElse(null) == null)
                 ubi = ubicacionRepo.save(ubi);
         } catch (Exception e) {
-            //e.printStackTrace();
+            LOG.severe(e.getLocalizedMessage());
         }
 
         return ResponseEntity.ok(ubi);
@@ -136,7 +157,7 @@ public class CdrController {
             emailSender.send(message);
             LOG.info("Se ha enviado el correo.");
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.severe(e.getLocalizedMessage());
         }
 
         return ResponseEntity.ok(ruta);
