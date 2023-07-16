@@ -1,5 +1,7 @@
 package com.exg.cdr.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -42,8 +44,10 @@ public class CdrUbicacion implements Serializable {
     @Basic(optional = false)
     @Column(name = "ubi_guardada")
     private boolean ubiGuardada;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "rutUbiDestino")
     private List<CdrRutas> cdrRutasList;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "rutUbiPartida")
     private List<CdrRutas> cdrRutasList1;
 

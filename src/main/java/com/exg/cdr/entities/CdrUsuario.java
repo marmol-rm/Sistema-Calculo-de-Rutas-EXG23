@@ -1,5 +1,7 @@
 package com.exg.cdr.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -46,6 +48,7 @@ public class CdrUsuario implements Serializable {
     @Basic(optional = false)
     @Column(name = "usu_email")
     private String usuEmail;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "rutUsuId")
     private List<CdrRutas> cdrRutasList;
 

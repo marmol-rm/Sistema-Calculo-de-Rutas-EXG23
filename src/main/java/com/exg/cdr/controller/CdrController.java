@@ -14,11 +14,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.logging.Logger;
 
 @RestController
 @CrossOrigin("*")
@@ -32,8 +38,9 @@ public class CdrController {
     private CdrRutasRepo rutasRepo;
     @Autowired
     private CdrPlantillaCorreoRepo plantillaCorreoRepo;
-
+    @Autowired
     private JavaMailSender emailSender;
+    private static final Logger LOG = Logger.getLogger(CdrController.class.getName());
 
     @GetMapping("/get-users")
     List<CdrUsuario> getUsers() {
@@ -46,12 +53,19 @@ public class CdrController {
     }
 
     @GetMapping("/get-rutas")
-    List<CdrRutas> getRutas() {
-        try {
-            return rutasRepo.findAll();
-        } catch (Exception e) {
-            //e.printStackTrace();
-            return new ArrayList<>();
+    List<CdrRutas> getRutas(@RequestParam(required = false) String fecha) {
+        if(fecha != null) {
+            try {
+                return rutasRepo.findByRutFecha(fecha);
+            } catch (Exception e) {
+                return new ArrayList<>();
+            }
+        } else {
+            try {
+                return rutasRepo.findAll();
+            } catch (Exception e) {
+                return new ArrayList<>();
+            }
         }
     }
 
@@ -108,16 +122,21 @@ public class CdrController {
             ruta.setRutUbiDestino(ubiDestino);
             if(ruta.getRutUbiDestino() != null)
                 ruta = rutasRepo.save(ruta);
-
-            // Se envía el correo de finaluzacion
+            // Se envía el correo de finalizacion
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("");
+            String destino = "Usted ha llegado a: " +
+                    ruta.getRutUbiDestino().getUbiNombre() + ". ";
+            message.setFrom("CDR");
             message.setTo(r.getUsuEmail());
             message.setSubject(plantilla.getPctAsunto());
-            message.setText(plantilla.getPtcMensaje());
-            //emailSender.send(message);
+            message.setText(plantilla.getPtcSaludo() + destino +
+                            plantilla.getPtcMensaje() +
+                            plantilla.getPtcDespedida()
+            );
+            emailSender.send(message);
+            LOG.info("Se ha enviado el correo.");
         } catch (Exception e) {
-            //e.printStackTrace();
+            e.printStackTrace();
         }
 
         return ResponseEntity.ok(ruta);
