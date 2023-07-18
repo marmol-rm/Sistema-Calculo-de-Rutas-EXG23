@@ -35,7 +35,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "CdrRutas.findByRutGuardada", query = "SELECT c FROM CdrRutas c WHERE c.rutGuardada = :rutGuardada"),
     @NamedQuery(name = "CdrRutas.findByRutFecha", query = "SELECT c FROM CdrRutas c WHERE c.rutFecha = :rutFecha"),
     @NamedQuery(name = "CdrRutas.findByRutDistancia", query = "SELECT c FROM CdrRutas c WHERE c.rutDistancia = :rutDistancia"),
-    @NamedQuery(name = "CdrRutas.findByRutTipo", query = "SELECT c FROM CdrRutas c WHERE c.rutTipo = :rutTipo")})
+    @NamedQuery(name = "CdrRutas.findByRutTipo", query = "SELECT c FROM CdrRutas c WHERE c.rutTipo = :rutTipo"),
+    @NamedQuery(name = "CdrRutas.findByRutTiempoTotal", query = "SELECT c FROM CdrRutas c WHERE c.rutTiempoTotal = :rutTiempoTotal")})
 public class CdrRutas implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -65,11 +66,14 @@ public class CdrRutas implements Serializable {
     @Column(name = "rut_fecha")
     @Temporal(TemporalType.DATE)
     private Date rutFecha;
+    @Basic(optional = false)
     @Column(name = "rut_distancia")
     private BigDecimal rutDistancia;
     @Basic(optional = false)
     @Column(name = "rut_tipo")
     private Character rutTipo;
+    @Column(name = "rut_tiempo_total")
+    private BigDecimal rutTiempoTotal;
     @JoinColumn(name = "rut_ubi_destino", referencedColumnName = "ubi_id")
     @ManyToOne(optional = false)
     private CdrUbicacion rutUbiDestino;
@@ -87,8 +91,9 @@ public class CdrRutas implements Serializable {
         this.rutId = rutId;
     }
 
-    public CdrRutas(Integer rutId, String rutCoordenadasPartida, String rutCoordenadasDestino, Date rutHoraInicio,
-                    Date rutHoraFin, boolean rutGuardada, Date rutFecha, BigDecimal rutDistancia, Character rutTipo) {
+    public CdrRutas(Integer rutId, String rutCoordenadasPartida, String rutCoordenadasDestino,
+                    Date rutHoraInicio, Date rutHoraFin, boolean rutGuardada, Date rutFecha,
+                    BigDecimal rutDistancia, Character rutTipo, BigDecimal rutTiempoTotal) {
         this.rutId = rutId;
         this.rutCoordenadasPartida = rutCoordenadasPartida;
         this.rutCoordenadasDestino = rutCoordenadasDestino;
@@ -98,6 +103,7 @@ public class CdrRutas implements Serializable {
         this.rutFecha = rutFecha;
         this.rutDistancia = rutDistancia;
         this.rutTipo = rutTipo;
+        this.rutTiempoTotal = rutTiempoTotal;
     }
 
     public Integer getRutId() {
@@ -172,6 +178,14 @@ public class CdrRutas implements Serializable {
         this.rutTipo = rutTipo;
     }
 
+    public BigDecimal getRutTiempoTotal() {
+        return rutTiempoTotal;
+    }
+
+    public void setRutTiempoTotal(BigDecimal rutTiempoTotal) {
+        this.rutTiempoTotal = rutTiempoTotal;
+    }
+
     public CdrUbicacion getRutUbiDestino() {
         return rutUbiDestino;
     }
@@ -205,6 +219,7 @@ public class CdrRutas implements Serializable {
 
     @Override
     public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof CdrRutas)) {
             return false;
         }

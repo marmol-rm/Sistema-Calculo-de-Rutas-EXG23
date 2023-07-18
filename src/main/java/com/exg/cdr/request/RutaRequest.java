@@ -15,6 +15,7 @@ public class RutaRequest {
     private boolean rutGuardada;
     private Date fecha;
     private BigDecimal distanciaTotal;
+    private BigDecimal tiempoTotal;
     private Character tipo;
 
     public RutaRequest() {
@@ -98,6 +99,14 @@ public class RutaRequest {
 
     public void setDistanciaTotal(BigDecimal distanciaTotal) {
         this.distanciaTotal = distanciaTotal;
+    }
+
+    public BigDecimal getTiempoTotal() {
+        return tiempoTotal;
+    }
+
+    public void setTiempoTotal(BigDecimal tiempoTotal) {
+        this.tiempoTotal = tiempoTotal;
     }
 
     public Character getTipo() {

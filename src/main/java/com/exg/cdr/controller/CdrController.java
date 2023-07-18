@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 @CrossOrigin("*")
 @RequestMapping("/cdr")
 public class CdrController {
+
     @Autowired
     private CdrUsuarioRepo usuarioRepo;
     @Autowired
@@ -46,6 +47,16 @@ public class CdrController {
         } catch (Exception e) {
             LOG.severe(e.getLocalizedMessage());
             return new ArrayList<>();
+        }
+    }
+
+    @GetMapping("/val-user")
+    Boolean validateUser(@RequestParam String email, @RequestParam String pwd) {
+        try {
+            return !usuarioRepo.validate(email, pwd).isEmpty();
+        } catch (Exception e) {
+            LOG.severe(e.getLocalizedMessage());
+            return false;
         }
     }
 
@@ -87,7 +98,7 @@ public class CdrController {
         }
     }
 
-    //@PostMapping("/save-user")
+    @PostMapping("/save-user")
     ResponseEntity<CdrUsuario> saveUser(@RequestBody CdrUsuario usr) {
         try {
             if(usuarioRepo.findByUsuEmail(usr.getUsuEmail()).orElse(null) == null &&
@@ -101,10 +112,10 @@ public class CdrController {
         return ResponseEntity.ok(usr);
     }
 
-    //@PostMapping("/save-ubi")
-    ResponseEntity<CdrUbicacion> saveUbicacion(@RequestBody CdrUbicacion ubi) {
+    //@PutMapping("/update-ubi")
+    ResponseEntity<CdrUbicacion> updateUbicacion(@RequestBody CdrUbicacion ubi) {
         try {
-            if(ubicacionRepo.findByUbiNombre(ubi.getUbiNombre()).orElse(null) == null)
+            if(ubicacionRepo.existsById(ubi.getUbiId()))
                 ubi = ubicacionRepo.save(ubi);
         } catch (Exception e) {
             LOG.severe(e.getLocalizedMessage());
@@ -119,8 +130,9 @@ public class CdrController {
         CdrRutas ruta = new CdrRutas(
                 null, r.getCoordPartida(), r.getCoordDestino(),
                 r.getHoraInicio(), r.getHoraFin(), false,
-                new Date(), r.getDistanciaTotal(), 'V'
+                new Date(), r.getDistanciaTotal(), 'V', r.getTiempoTotal()
         );
+
         try {
             CdrPlantillaCorreo plantilla = plantillaCorreoRepo.findById(1).orElse(new CdrPlantillaCorreo());
             CdrUbicacion ubiPartida = ubicacionRepo.findByUbiNombre(r.getUbiPartida()).orElse(null);
