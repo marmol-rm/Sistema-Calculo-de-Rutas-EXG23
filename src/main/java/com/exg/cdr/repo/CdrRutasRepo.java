@@ -12,8 +12,10 @@ import java.util.List;
 public interface CdrRutasRepo extends JpaRepository<CdrRutas, Integer> {
 
     List<CdrRutas> findByRutFecha(Date rutFecha);
-    @Query(nativeQuery = true, value = "select * from cdr_rutas r where r.rut_fecha  = ?1 order by rut_id desc")
-    List<CdrRutas> findByRutFecha(String rutFecha);
+    @Query(nativeQuery = true,
+            value = "select * from cdr_rutas r where r.rut_fecha = ?1 " +
+                    "and r.rut_usu_id = ?2 order by rut_id desc")
+    List<CdrRutas> findByRutFecha(String rutFecha, Integer id);
     List<CdrRutas> findByRutTipo(char rutTipo);
 
 }

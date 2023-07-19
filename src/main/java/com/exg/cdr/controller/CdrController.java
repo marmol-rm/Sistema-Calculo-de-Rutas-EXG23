@@ -50,10 +50,10 @@ public class CdrController {
         }
     }
 
-    @GetMapping("/val-user")
-    Boolean validateUser(@RequestParam String email, @RequestParam String pwd) {
+    @PostMapping ("/val-user")
+    Boolean validateUser(@RequestBody CdrUsuario u) {
         try {
-            return !usuarioRepo.validate(email, pwd).isEmpty();
+            return !usuarioRepo.validate(u.getUsuEmail(), u.getUsuPassword()).isEmpty();
         } catch (Exception e) {
             LOG.severe(e.getLocalizedMessage());
             return false;
@@ -61,10 +61,15 @@ public class CdrController {
     }
 
     @GetMapping("/get-rutas")
-    List<CdrRutas> getRutas(@RequestParam(required = false) String fecha) {
+    List<CdrRutas> getRutas(@RequestParam String email, @RequestParam(required = false) String fecha) {
         if(fecha != null) {
             try {
-                return rutasRepo.findByRutFecha(fecha);
+                CdrUsuario usuario = usuarioRepo.findByUsuEmail(email).orElse(null);
+                if(usuario != null) {
+                    return rutasRepo.findByRutFecha(fecha, usuario.getUsuId());
+                } else {
+                    return new ArrayList<>();
+                }
             } catch (Exception e) {
                 LOG.severe(e.getLocalizedMessage());
                 return new ArrayList<>();
@@ -80,7 +85,7 @@ public class CdrController {
     }
 
     @GetMapping("/get-ubi")
-    List<CdrUbicacion> getUbicacion(@RequestParam(required = false) String email) {
+    List<CdrUbicacion> getUbicacion(@RequestParam(required = true) String email) {
         if(email != null) {
             try {
                 return ubicacionRepo.findUbiVisitadas(email);
