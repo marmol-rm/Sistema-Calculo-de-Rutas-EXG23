@@ -17,6 +17,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -135,7 +136,8 @@ public class CdrController {
         CdrRutas ruta = new CdrRutas(
                 null, r.getCoordPartida(), r.getCoordDestino(),
                 r.getHoraInicio(), r.getHoraFin(), false,
-                new Date(), r.getDistanciaTotal(), 'V', r.getTiempoTotal()
+                new Date(), r.getDistanciaTotal(), 'V',
+                r.getTiempoTotal().divide(BigDecimal.valueOf(60))
         );
 
         try {
