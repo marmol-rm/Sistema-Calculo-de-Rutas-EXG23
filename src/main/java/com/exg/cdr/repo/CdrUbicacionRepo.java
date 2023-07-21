@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface CdrUbicacionRepo extends JpaRepository<CdrUbicacion, Integer> {
 
-    Optional<CdrUbicacion> findByUbiNombre(String ubiNombre);
+    List<CdrUbicacion> findByUbiNombre(String ubiNombre);
     @Query("Select distinct ubi from CdrUbicacion ubi " +
             "INNER JOIN CdrRutas rut ON rut.rutUbiDestino.ubiId = ubi.ubiId " +
             "INNER JOIN CdrUsuario usu ON usu.usuId = rut.rutUsuId.usuId " +

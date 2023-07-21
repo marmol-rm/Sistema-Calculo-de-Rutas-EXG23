@@ -133,23 +133,42 @@ public class CdrController {
     @PostMapping("/save-ruta")
     ResponseEntity<CdrRutas> saveRuta(@RequestBody RutaRequest r) {
         // Se crea la ruta base
+        if(r.getCoordDestino() == null) r.setCoordDestino("unknown");
+        if(r.getCoordPartida() == null) r.setCoordPartida("unknown");
+        if(r.getHoraInicio() == null) r.setHoraInicio(new Date());
+        if(r.getHoraFin() == null) r.setHoraFin(new Date());
         CdrRutas ruta = new CdrRutas(
                 null, r.getCoordPartida(), r.getCoordDestino(),
                 r.getHoraInicio(), r.getHoraFin(), false,
                 new Date(), r.getDistanciaTotal(), 'V',
-                r.getTiempoTotal().divide(BigDecimal.valueOf(60))
+                r.getTiempoTotal()
         );
 
         try {
             CdrPlantillaCorreo plantilla = plantillaCorreoRepo.findById(1).orElse(new CdrPlantillaCorreo());
-            CdrUbicacion ubiPartida = ubicacionRepo.findByUbiNombre(r.getUbiPartida()).orElse(null);
-            CdrUbicacion ubiDestino = ubicacionRepo.findByUbiNombre(r.getUbiDestino()).orElse(null);
 
-            if(ubiPartida == null && r.getUbiPartida() != null) {
+            CdrUbicacion ubiPartida, ubiDestino;
+
+            try {
+                if(r.getUbiPartida() != null) {
+                    ubiPartida = ubicacionRepo.findByUbiNombre(r.getUbiPartida()).get(0);
+                } else {
+                    r.setUbiPartida("unknown");
+                    ubiPartida = new CdrUbicacion(null, r.getUbiPartida(), false);
+                }
+            } catch (Exception e) {
                 ubiPartida = new CdrUbicacion(null, r.getUbiPartida(), false);
                 ubiPartida = ubicacionRepo.save(ubiPartida);
             }
-            if(ubiDestino == null && r.getUbiDestino() != null) {
+
+            try {
+                if(r.getUbiDestino() != null) {
+                    ubiDestino = ubicacionRepo.findByUbiNombre(r.getUbiDestino()).get(0);
+                } else {
+                    r.setUbiDestino("unknown");
+                    ubiDestino = new CdrUbicacion(null, r.getUbiDestino(), false);
+                }
+            } catch (Exception e) {
                 ubiDestino = new CdrUbicacion(null, r.getUbiDestino(), false);
                 ubiDestino = ubicacionRepo.save(ubiDestino);
             }
@@ -174,6 +193,7 @@ public class CdrController {
             LOG.info("Se ha enviado el correo.");
         } catch (Exception e) {
             LOG.severe(e.getLocalizedMessage());
+            e.printStackTrace();
         }
 
         return ResponseEntity.ok(ruta);
