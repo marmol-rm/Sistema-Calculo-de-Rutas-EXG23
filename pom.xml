@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.exg</groupId>
-    <artifactId>Sistema-Calculo-de-Rutas-EXG23</artifactId>
+    <artifactId>CDR-EXG23</artifactId>
     <version>1.0</version>
     <packaging>war</packaging>
     <name>CDR</name>
